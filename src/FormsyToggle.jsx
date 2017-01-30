@@ -1,35 +1,55 @@
 import React from 'react';
 import Formsy from 'formsy-react';
 import Toggle from 'material-ui/Toggle';
-import {_setMuiComponentAndMaybeFocus} from './utils';
+import { setMuiComponentAndMaybeFocus } from './utils';
 
-let FormsyToggle = React.createClass({
-  mixins: [Formsy.Mixin],
+const FormsyToggle = React.createClass({
 
   propTypes: {
-    name: React.PropTypes.string.isRequired
+    defaultToggled: React.PropTypes.bool,
+    name: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func,
+    validationError: React.PropTypes.string,
+    validationErrors: React.PropTypes.object,
+    validations: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
   },
 
-  handleValueChange: function (event, value) {
+  mixins: [Formsy.Mixin],
+
+  componentDidMount() {
+    this.setValue(this.muiComponent.isToggled());
+  },
+
+  handleChange(event, value) {
     this.setValue(value);
     if (this.props.onChange) this.props.onChange(event, value);
   },
 
-  componentDidMount: function () {
-    this.setValue(this._muiComponent.isToggled());
-  },
+  setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
 
-  _setMuiComponentAndMaybeFocus: _setMuiComponentAndMaybeFocus,
+  render() {
+    const {
+      defaultToggled,
+      validations, // eslint-disable-line no-unused-vars
+      validationError, // eslint-disable-line no-unused-vars
+      validationErrors, // eslint-disable-line no-unused-vars
+      ...rest } = this.props;
 
-  render: function () {
+    let value = this.getValue();
+
+    if (typeof value === 'undefined') {
+      value = (typeof defaultToggled !== 'undefined') ? defaultToggled : false;
+    }
+
     return (
       <Toggle
-        {...this.props}
-        ref={this._setMuiComponentAndMaybeFocus}
-        onToggle={this.handleValueChange}
+        {...rest}
+        onToggle={this.handleChange}
+        ref={this.setMuiComponentAndMaybeFocus}
+        toggled={value}
       />
     );
-  }
+  },
 });
 
-module.exports = FormsyToggle;
+export default FormsyToggle;
