@@ -1,7 +1,7 @@
 import React from 'react';
 import Formsy from 'formsy-react';
 import DatePicker from 'material-ui/DatePicker';
-import { setMuiComponentAndMaybeFocus } from './utils';
+import {setMuiComponentAndMaybeFocus} from './utils';
 
 const FormsyDate = React.createClass({
 
@@ -19,7 +19,7 @@ const FormsyDate = React.createClass({
   mixins: [Formsy.Mixin],
 
   componentDidMount() {
-    const { defaultDate } = this.props;
+    const {defaultDate} = this.props;
     const value = this.getValue();
 
     if (typeof value === 'undefined' && typeof defaultDate !== 'undefined') {
@@ -41,10 +41,12 @@ const FormsyDate = React.createClass({
       validationErrors, // eslint-disable-line no-unused-vars
       validationError, // eslint-disable-line no-unused-vars
       requiredError,
-      ...rest } = this.props;
-    const { isRequired, isPristine, isValid, isFormSubmitted } = this;
-    const isRequiredError = isRequired() && !isPristine() && !isValid() && isFormSubmitted() && requiredError;
-    const errorText = this.getErrorMessage() || isRequiredError;
+      ...rest
+    } = this.props;
+    const {isRequired, isPristine, isValid} = this;
+    const isRequiredError = isRequired() && !isPristine() && !isValid();
+    const errorText = this.getErrorMessage() || (isRequiredError ? requiredError || "This field is required" : null);
+
     return (
       <DatePicker
         {...rest}

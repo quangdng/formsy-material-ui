@@ -1,7 +1,7 @@
 import React from 'react';
 import Formsy from 'formsy-react';
 import SelectField from 'material-ui/SelectField';
-import { setMuiComponentAndMaybeFocus } from './utils';
+import {setMuiComponentAndMaybeFocus} from './utils';
 
 const FormsySelect = React.createClass({
 
@@ -37,18 +37,21 @@ const FormsySelect = React.createClass({
   setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
 
   render() {
-    let { value } = this.props;
+    let {value} = this.props;
 
-    const { validations, // eslint-disable-line no-unused-vars
-        validationError, // eslint-disable-line no-unused-vars
-        validationErrors, // eslint-disable-line no-unused-vars
-      ...rest } = this.props;
+    const {
+      validations, // eslint-disable-line no-unused-vars
+      validationError, // eslint-disable-line no-unused-vars
+      validationErrors, // eslint-disable-line no-unused-vars
+      ...rest
+    } = this.props;
 
     value = this.state.hasChanged ? this.getValue() : value;
-    const { requiredError } = this.props;
-    const { isRequired, isPristine, isValid, isFormSubmitted } = this;
-    const isRequiredError = isRequired() && !isPristine() && !isValid() && isFormSubmitted() && requiredError;
-    const errorText = this.getErrorMessage() || isRequiredError;
+    const {requiredError} = this.props;
+    const {isRequired, isPristine, isValid, isFormSubmitted} = this;
+    const isRequiredError = isRequired() && !isPristine() && !isValid();
+    const errorText = this.getErrorMessage() || (isRequiredError ? requiredError || "This field is required" : null);
+
     return (
       <SelectField
         {...rest}

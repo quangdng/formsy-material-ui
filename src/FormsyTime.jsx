@@ -1,7 +1,7 @@
 import React from 'react';
 import Formsy from 'formsy-react';
 import TimePicker from 'material-ui/TimePicker';
-import { setMuiComponentAndMaybeFocus } from './utils';
+import {setMuiComponentAndMaybeFocus} from './utils';
 
 const FormsyTime = React.createClass({
 
@@ -9,6 +9,7 @@ const FormsyTime = React.createClass({
     defaultTime: React.PropTypes.object,
     name: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func,
+    requiredError: React.PropTypes.string,
     validationError: React.PropTypes.string,
     validationErrors: React.PropTypes.object,
     validations: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
@@ -18,7 +19,7 @@ const FormsyTime = React.createClass({
   mixins: [Formsy.Mixin],
 
   componentDidMount() {
-    const { defaultTime } = this.props;
+    const {defaultTime} = this.props;
     const value = this.getValue();
 
     if (typeof value === 'undefined' && typeof defaultTime !== 'undefined') {
@@ -39,13 +40,18 @@ const FormsyTime = React.createClass({
       validations, // eslint-disable-line no-unused-vars
       validationError, // eslint-disable-line no-unused-vars
       validationErrors, // eslint-disable-line no-unused-vars
+      requiredError,
       ...rest,
     } = this.props;
+
+    const {isRequired, isPristine, isValid} = this;
+    const isRequiredError = isRequired() && !isPristine() && !isValid();
+    const errorText = this.getErrorMessage() || (isRequiredError ? requiredError || "This field is required" : null);
 
     return (
       <TimePicker
         {...rest}
-        errorText={this.getErrorMessage()}
+        errorText={errorText}
         onChange={this.handleChange}
         ref={this.setMuiComponentAndMaybeFocus}
         value={this.getValue()}

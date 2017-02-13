@@ -2,7 +2,7 @@ import React from 'react';
 import keycode from 'keycode';
 import Formsy from 'formsy-react';
 import TextField from 'material-ui/TextField';
-import { setMuiComponentAndMaybeFocus, debounce } from './utils';
+import {setMuiComponentAndMaybeFocus, debounce} from './utils';
 
 const FormsyText = React.createClass({
 
@@ -26,6 +26,9 @@ const FormsyText = React.createClass({
 
   componentWillMount() {
     this.setValue(this.controlledValue());
+    this.setState({
+      _isPristine: true
+    });
   },
 
   componentWillReceiveProps(nextProps) {
@@ -35,7 +38,7 @@ const FormsyText = React.createClass({
       const isValid = this.isValidValue(value);
 
       if (isValueChanging || this.props.defaultValue === this.getValue()) {
-        this.setState({ isValid });
+        this.setState({isValid});
         this.setValue(value);
       }
     }
@@ -48,7 +51,7 @@ const FormsyText = React.createClass({
       const value = this.controlledValue(nextProps);
       const isValid = this.isValidValue(value);
       this.setValue(value);
-      this.setState({ isValid });
+      this.setState({isValid});
     }
   },
 
@@ -83,12 +86,12 @@ const FormsyText = React.createClass({
           this.setValue(event.currentTarget.value);
           // If it becomes invalid, and there isn't an error message, invalidate without error.
         } else {
-          this.setState({ _value: event.currentTarget.value, _isPristine: false });
+          this.setState({_value: event.currentTarget.value, _isPristine: false});
         }
       }
     }
 
-    this.setState({ isValid: this.isValidValue(event.currentTarget.value) });
+    this.setState({isValid: this.isValidValue(event.currentTarget.value)});
     if (this.props.onChange) this.props.onChange(event, event.currentTarget.value);
   },
 
@@ -96,10 +99,10 @@ const FormsyText = React.createClass({
     if (keycode(event) === 'enter') this.setValue(event.currentTarget.value);
     if (this.props.onKeyDown) this.props.onKeyDown(event, event.currentTarget.value);
   },
-  
+
   handleEnterKeyDown: function handleEnterKeyDown(event) {
-   this.setValue(event.currentTarget.value);
-   if (this.props.onEnterKeyDown) this.props.onEnterKeyDown(event, event.currentTarget.value);
+    this.setValue(event.currentTarget.value);
+    if (this.props.onEnterKeyDown) this.props.onEnterKeyDown(event, event.currentTarget.value);
   },
 
   setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
@@ -116,9 +119,9 @@ const FormsyText = React.createClass({
       ...rest,
     } = this.props;
 
-    const { isRequired, isPristine, isValid, isFormSubmitted } = this;
-    const isRequiredError = isRequired() && !isPristine() && !isValid() && isFormSubmitted() && requiredError;
-    const errorText = this.getErrorMessage() || isRequiredError;
+    const {isRequired, isPristine, isValid} = this;
+    const isRequiredError = isRequired() && !isPristine() && !isValid();
+    const errorText = this.getErrorMessage() || (isRequiredError ? requiredError || "This field is required" : null);
 
     return (
       <TextField
@@ -129,8 +132,8 @@ const FormsyText = React.createClass({
         onKeyDown={this.handleKeyDown}
         ref={this.setMuiComponentAndMaybeFocus}
         value={this.getValue()}
-        underlineStyle={this.state.isValid ? { color: this.validationColor() } : {}}
-        underlineFocusStyle={this.state.isValid ? { color: this.validationColor() } : {}}
+        underlineStyle={this.state.isValid ? {color: this.validationColor()} : {}}
+        underlineFocusStyle={this.state.isValid ? {color: this.validationColor()} : {}}
       />
     );
   },
