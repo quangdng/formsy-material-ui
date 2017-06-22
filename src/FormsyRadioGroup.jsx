@@ -1,75 +1,94 @@
 import React from 'react';
 import Formsy from 'formsy-react';
-import { RadioButtonGroup, RadioButton } from 'material-ui/RadioButton';
-import { setMuiComponentAndMaybeFocus } from './utils';
+import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
+import {setMuiComponentAndMaybeFocus} from './utils';
 
 const FormsyRadioGroup = React.createClass({
 
-  propTypes: {
-    children: React.PropTypes.node,
-    defaultSelected: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.bool]),
-    name: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func,
-    validationError: React.PropTypes.string,
-    validationErrors: React.PropTypes.object,
-    validations: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
-    value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.bool]),
-  },
+    propTypes: {
+        children: React.PropTypes.node,
+        defaultSelected: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.bool]),
+        name: React.PropTypes.string.isRequired,
+        onChange: React.PropTypes.func,
+        validationError: React.PropTypes.string,
+        validationErrors: React.PropTypes.object,
+        validations: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
+        value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.bool]),
+    },
 
-  mixins: [Formsy.Mixin],
+    mixins: [Formsy.Mixin],
 
-  componentDidMount() {
-    this.setValue(this.muiComponent.getSelectedValue());
-  },
+    componentDidMount() {
+        this.setValue(this.muiComponent.getSelectedValue());
+    },
 
-  handleValueChange(event, value) {
-    this.setValue(value);
-    if (this.props.onChange) this.props.onChange(event, value);
-  },
+    controlledValue(props = this.props) {
+        return props.value || props.defaultSelected || '';
+    },
 
-  setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
+    componentWillReceiveProps(nextProps) {
+        const isValueChanging = nextProps.value !== this.props.value;
+        if (isValueChanging || nextProps.defaultSelected !== this.props.defaultSelected) {
+            const value = this.controlledValue(nextProps);
 
-  render() {
-    let {
-      validations, // eslint-disable-line no-unused-vars, prefer-const
-      validationError, // eslint-disable-line no-unused-vars, prefer-const
-      validationErrors, // eslint-disable-line no-unused-vars, prefer-const
-      defaultSelected, // eslint-disable-line prefer-const
-      value,
-      ...rest } = this.props;
+            if (isValueChanging || nextProps.defaultSelected !== this.props.defaultSelected) {
+                this.setState({value});
+                this.setValue(value);
+                console.log(value);
+            }
+        }
+    },
+    
+    handleValueChange(event, value) {
+        this.setValue(value);
+        if (this.props.onChange) this.props.onChange(event, value);
+    },
 
-      // remove unknown props from children
-    const children = React.Children.map(this.props.children, (radio) => {
-      const {
-        validations, // eslint-disable-line no-unused-vars
-        validationError, // eslint-disable-line no-unused-vars
-        validationErrors, // eslint-disable-line no-unused-vars
-        ...rest } = radio.props;
+    setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
 
-      return React.createElement(RadioButton, rest);
-    });
+    render() {
+        let {
+            validations, // eslint-disable-line no-unused-vars, prefer-const
+            validationError, // eslint-disable-line no-unused-vars, prefer-const
+            validationErrors, // eslint-disable-line no-unused-vars, prefer-const
+            defaultSelected, // eslint-disable-line prefer-const
+            value,
+            ...rest
+        } = this.props;
 
-    // For backward compatibility or for
-    // users used to MaterialUI, use the "defaultSelected"
-    // attribute for the "value" if the value was not
-    // explicitly set.
-    if (typeof value === 'undefined') {
-      value = defaultSelected;
-    }
+        // remove unknown props from children
+        const children = React.Children.map(this.props.children, (radio) => {
+            const {
+                validations, // eslint-disable-line no-unused-vars
+                validationError, // eslint-disable-line no-unused-vars
+                validationErrors, // eslint-disable-line no-unused-vars
+                ...rest
+            } = radio.props;
 
-    return (
-      <RadioButtonGroup
-        disabled={this.isFormDisabled()}
-        {...rest}
-        ref={this.setMuiComponentAndMaybeFocus}
-        onChange={this.handleValueChange}
-        valueSelected={this.getValue()}
-        defaultSelected={value}
-      >
-        {children}
-      </RadioButtonGroup>
-    );
-  },
+            return React.createElement(RadioButton, rest);
+        });
+
+        // For backward compatibility or for
+        // users used to MaterialUI, use the "defaultSelected"
+        // attribute for the "value" if the value was not
+        // explicitly set.
+        if (typeof value === 'undefined') {
+            value = defaultSelected;
+        }
+
+        return (
+          <RadioButtonGroup
+            disabled={this.isFormDisabled()}
+            {...rest}
+            ref={this.setMuiComponentAndMaybeFocus}
+            onChange={this.handleValueChange}
+            valueSelected={this.getValue()}
+            defaultSelected={value}
+          >
+              {children}
+          </RadioButtonGroup>
+        );
+    },
 });
 
 export default FormsyRadioGroup;
