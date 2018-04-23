@@ -1,12 +1,12 @@
-import React from 'react';
-import Formsy from 'formsy-react';
+import createReactClass from "create-react-class"
+import { withFormsy } from "formsy-react"
 
-const FormsyRadio = React.createClass({
-
-  mixins: [Formsy.Mixin],
+const FormsyRadio = createReactClass({
+  displayName: "FormsyRadio",
 
   // Material-UI replaces any component inside RadioButtonGroup with RadioButton, so no need to render it here
-  render() {},
-});
+  render() {
+  }
+})
 
-export default FormsyRadio;
+export default withFormsy(FormsyRadio)

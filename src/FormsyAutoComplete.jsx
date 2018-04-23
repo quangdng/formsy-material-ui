@@ -1,55 +1,57 @@
-import React from 'react';
-import keycode from 'keycode';
-import Formsy from 'formsy-react';
-import AutoComplete from 'material-ui/AutoComplete';
-import { setMuiComponentAndMaybeFocus } from 'formsy-react/src/utils';
+import PropTypes from "prop-types"
+import React from "react"
+import createReactClass from "create-react-class"
+import keycode from "keycode"
+import { withFormsy } from "formsy-react"
+import AutoComplete from "material-ui/AutoComplete"
+import { setMuiComponentAndMaybeFocus } from "./utils"
 
-const FormsyAutoComplete = React.createClass({
+const FormsyAutoComplete = createReactClass({
+  displayName: "FormsyAutoComplete",
 
   propTypes: {
-    defaultValue: React.PropTypes.any,
-    name: React.PropTypes.string.isRequired,
-    onBlur: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    onFocus: React.PropTypes.func,
-    onKeyDown: React.PropTypes.func,
-    value: React.PropTypes.any,
+    defaultValue: PropTypes.any,
+    name: PropTypes.string.isRequired,
+    onBlur: PropTypes.func,
+    onChange: PropTypes.func,
+    onFocus: PropTypes.func,
+    onKeyDown: PropTypes.func,
+    value: PropTypes.any
   },
 
-  mixins: [Formsy.Mixin],
 
   getInitialState() {
     return {
-      value: this.props.defaultValue || this.props.value || '',
-    };
+      value: this.props.defaultValue || this.props.value || ""
+    }
   },
 
   componentWillMount() {
-    this.setValue(this.props.defaultValue || this.props.value || '');
+    this.props.setValue(this.props.defaultValue || this.props.value || "")
   },
 
   handleBlur: function handleBlur(event) {
-    this.setValue(event.currentTarget.value);
-    if (this.props.onBlur) this.props.onBlur(event);
+    this.props.setValue(event.currentTarget.value)
+    if (this.props.onBlur) this.props.onBlur(event)
   },
 
   handleChange: function handleChange(event) {
     this.setState({
-      value: event.currentTarget.value,
-    });
-    if (this.props.onChange) this.props.onChange(event);
+      value: event.currentTarget.value
+    })
+    if (this.props.onChange) this.props.onChange(event)
   },
 
   handleUpdateInput: function handleUpdateInput(value) {
     this.setState({
-      value,
-    });
-    if (this.props.onChange) this.props.onChange(null, value);
+      value
+    })
+    if (this.props.onChange) this.props.onChange(null, value)
   },
 
   handleKeyDown: function handleKeyDown(event) {
-    if (keycode(event) === 'enter') this.setValue(event.currentTarget.value);
-    if (this.props.onKeyDown) this.props.onKeyDown(event, event.currentTarget.value);
+    if (keycode(event) === "enter") this.props.setValue(event.currentTarget.value)
+    if (this.props.onKeyDown) this.props.onKeyDown(event, event.currentTarget.value)
   },
 
   setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
@@ -59,12 +61,13 @@ const FormsyAutoComplete = React.createClass({
       defaultValue, // eslint-disable-line no-unused-vars
       onFocus,
       value, // eslint-disable-line no-unused-vars
-      ...rest } = this.props;
+      ...rest
+    } = this.props
     return (
       <AutoComplete
-        disabled={this.isFormDisabled()}
+        disabled={this.props.isFormDisabled()}
         {...rest}
-        errorText={this.getErrorMessage()}
+        errorText={this.props.getErrorMessage()}
         onBlur={this.handleBlur}
         onChange={this.handleChange}
         onUpdateInput={this.handleUpdateInput}
@@ -73,8 +76,8 @@ const FormsyAutoComplete = React.createClass({
         ref={this.setMuiComponentAndMaybeFocus}
         value={this.state.value}
       />
-    );
-  },
-});
+    )
+  }
+})
 
-export default FormsyAutoComplete;
+export default withFormsy(FormsyAutoComplete)

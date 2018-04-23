@@ -1,69 +1,70 @@
-import React from 'react';
-import Formsy from 'formsy-react';
-import SelectField from 'material-ui/SelectField';
-import {setMuiComponentAndMaybeFocus} from './utils';
+import PropTypes from "prop-types"
+import React from "react"
+import createReactClass from "create-react-class"
+import { withFormsy } from "formsy-react"
+import SelectField from "material-ui/SelectField"
+import { setMuiComponentAndMaybeFocus } from "./utils"
 
-const FormsySelect = React.createClass({
+const FormsySelect = createReactClass({
+  displayName: "FormsySelect",
 
-    propTypes: {
-        children: React.PropTypes.node,
-        name: React.PropTypes.string.isRequired,
-        onChange: React.PropTypes.func,
-        requiredError: React.PropTypes.string,
-        validationError: React.PropTypes.string,
-        validationErrors: React.PropTypes.object,
-        validations: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
-        value: React.PropTypes.any,
-    },
+  propTypes: {
+    children: PropTypes.node,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func,
+    requiredError: PropTypes.string,
+    validationError: PropTypes.string,
+    validationErrors: PropTypes.object,
+    validations: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    value: PropTypes.any
+  },
 
-    mixins: [Formsy.Mixin],
+  getInitialState() {
+    return {
+      hasChanged: false
+    }
+  },
 
-    getInitialState() {
-        return {
-            hasChanged: false,
-        };
-    },
+  handleChange(event, index, value) {
+    this.props.setValue(value)
 
-    handleChange(event, index, value) {
-        this.setValue(value);
+    this.setState({
+      hasChanged: value !== ""
+    })
 
-        this.setState({
-            hasChanged: value !== '',
-        });
+    if (this.props.onChange) this.props.onChange(event, value, index)
+  },
 
-        if (this.props.onChange) this.props.onChange(event, value, index);
-    },
+  setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
 
-    setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
+  render() {
+    const {
+      requiredError,
+      validations, // eslint-disable-line no-unused-vars
+      validationError, // eslint-disable-line no-unused-vars
+      validationErrors, // eslint-disable-line no-unused-vars
+      value: valueProp,
+      ...rest
+    } = this.props
 
-    render() {
-        const {
-            requiredError,
-            validations, // eslint-disable-line no-unused-vars
-            validationError, // eslint-disable-line no-unused-vars
-            validationErrors, // eslint-disable-line no-unused-vars
-            value: valueProp,
-            ...rest,
-        } = this.props;
+    const { isRequired, isPristine, isValid, isFormSubmitted } = this.props
+    const isRequiredError = isRequired() && !isPristine() && !isValid() && (requiredError || "This field is required")
+    const value = this.state.hasChanged ? this.props.getValue() : valueProp
+    const errorText = this.props.getErrorMessage() || isRequiredError
 
-        const {isRequired, isPristine, isValid, isFormSubmitted} = this;
-        const isRequiredError = isRequired() && !isPristine() && !isValid() && (requiredError || "This field is required");
-        const value = this.state.hasChanged ? this.getValue() : valueProp;
-        const errorText = this.getErrorMessage() || isRequiredError;
+    return (
+      <SelectField
+        disabled={this.props.isFormDisabled()}
+        errorText={errorText}
+        onChange={this.handleChange}
+        ref={this.setMuiComponentAndMaybeFocus}
+        value={value}
+        {...rest}
+      >
+        {this.props.children}
+      </SelectField>
+    )
+  }
+})
 
-        return (
-          <SelectField
-            disabled={this.isFormDisabled()}
-            errorText={errorText}
-            onChange={this.handleChange}
-            ref={this.setMuiComponentAndMaybeFocus}
-            value={value}
-            {...rest}
-          >
-              {this.props.children}
-          </SelectField>
-        );
-    },
-});
-
-export default FormsySelect;
+export default withFormsy(FormsySelect)

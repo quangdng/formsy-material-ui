@@ -1,28 +1,30 @@
-import React from 'react';
-import Formsy from 'formsy-react';
-import Toggle from 'material-ui/Toggle';
-import { setMuiComponentAndMaybeFocus } from './utils';
+import PropTypes from "prop-types"
+import React from "react"
+import createReactClass from "create-react-class"
+import { withFormsy } from "formsy-react"
+import Toggle from "material-ui/Toggle"
+import { setMuiComponentAndMaybeFocus } from "./utils"
 
-const FormsyToggle = React.createClass({
+const FormsyToggle = createReactClass({
+  displayName: "FormsyToggle",
 
   propTypes: {
-    defaultToggled: React.PropTypes.bool,
-    name: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func,
-    validationError: React.PropTypes.string,
-    validationErrors: React.PropTypes.object,
-    validations: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
+    defaultToggled: PropTypes.bool,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func,
+    validationError: PropTypes.string,
+    validationErrors: PropTypes.object,
+    validations: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
   },
 
-  mixins: [Formsy.Mixin],
 
   componentDidMount() {
-    this.setValue(this.muiComponent.isToggled());
+    this.props.setValue(this.muiComponent.isToggled())
   },
 
   handleChange(event, value) {
-    this.setValue(value);
-    if (this.props.onChange) this.props.onChange(event, value);
+    this.props.setValue(value)
+    if (this.props.onChange) this.props.onChange(event, value)
   },
 
   setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
@@ -33,24 +35,25 @@ const FormsyToggle = React.createClass({
       validations, // eslint-disable-line no-unused-vars
       validationError, // eslint-disable-line no-unused-vars
       validationErrors, // eslint-disable-line no-unused-vars
-      ...rest } = this.props;
+      ...rest
+    } = this.props
 
-    let value = this.getValue();
+    let value = this.props.getValue()
 
-    if (typeof value === 'undefined') {
-      value = (typeof defaultToggled !== 'undefined') ? defaultToggled : false;
+    if (typeof value === "undefined") {
+      value = (typeof defaultToggled !== "undefined") ? defaultToggled : false
     }
 
     return (
       <Toggle
-        disabled={this.isFormDisabled()}
+        disabled={this.props.isFormDisabled()}
         {...rest}
         onToggle={this.handleChange}
         ref={this.setMuiComponentAndMaybeFocus}
         toggled={value}
       />
-    );
-  },
-});
+    )
+  }
+})
 
-export default FormsyToggle;
+export default withFormsy(FormsyToggle)

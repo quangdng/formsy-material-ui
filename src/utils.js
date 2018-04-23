@@ -1,22 +1,22 @@
 export function setMuiComponentAndMaybeFocus(c) {
-  if (c === this.muiComponent) return;
+  if (c === this.muiComponent) return
 
-  this.muiComponent = c;
+  this.muiComponent = c
 
-  if (c && typeof c.focus === 'function') {
-    this.focus = () => c.focus();
-  } else if (this.hasOwnProperty('focus')) {
-    delete this.focus;
+  if (c && typeof c.focus === "function") {
+    this.focus = () => c.focus()
+  } else if (this.hasOwnProperty("focus")) {
+    delete this.focus
   }
 }
 
 export function debounce(fn, delay) {
-  let timeout;
+  let timeout
   return function() {
-    const args = arguments;
-    clearTimeout(timeout);
+    const args = arguments
+    clearTimeout(timeout)
     timeout = setTimeout(() => {
-      fn.apply(this, args);
-    }, delay);
-  };
+      fn.apply(this, args)
+    }, delay)
+  }
 }
