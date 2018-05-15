@@ -27,9 +27,11 @@ const FormsyText = createReactClass({
   },
 
 
-  defaultProps: {
-    underlineFocusStyle: {},
-    underlineStyle: {}
+  getDefaultProps() {
+    return {
+      underlineFocusStyle: {},
+      underlineStyle: {}
+    }
   },
 
   getInitialState() {
@@ -47,7 +49,7 @@ const FormsyText = createReactClass({
     const isValueChanging = nextProps.value !== this.props.value
     if (isValueChanging || nextProps.defaultValue !== this.props.defaultValue) {
       const value = this.controlledValue(nextProps)
-      const isValid = this.isValidValue(value)
+      const isValid = this.props.isValidValue(value)
 
       if (isValueChanging || this.props.defaultValue === this.props.getValue()) {
         this.setState({ value, isValid })
@@ -61,7 +63,7 @@ const FormsyText = createReactClass({
       nextState._isPristine !== this.state._isPristine) { // eslint-disable-line no-underscore-dangle
       // Calling state here is valid, as it cannot cause infinite recursion.
       const value = this.controlledValue(nextProps)
-      const isValid = this.isValidValue(value)
+      const isValid = this.props.isValidValue(value)
       this.props.setValue(value)
       this.setState({ value, isValid })
     }
@@ -90,7 +92,7 @@ const FormsyText = createReactClass({
         this.props.setValue(event.currentTarget.value)
       } else {
         // Only update on valid values, so as to not generate an error until focus is lost.
-        if (this.isValidValue(event.target.value)) {
+        if (this.props.isValidValue(event.target.value)) {
           this.props.setValue(event.currentTarget.value)
           // If it becomes invalid, and there isn't an error message, invalidate without error.
         }
@@ -98,7 +100,7 @@ const FormsyText = createReactClass({
     }
 
     // Controlled component
-    this.setState({ value: event.currentTarget.value, isValid: this.isValidValue(event.currentTarget.value) })
+    this.setState({ value: event.currentTarget.value, isValid: this.props.isValidValue(event.currentTarget.value) })
     if (this.props.onChange) this.props.onChange(event, event.currentTarget.value)
   },
 
@@ -121,6 +123,8 @@ const FormsyText = createReactClass({
 
     return (
       <TextField
+        {...rest}
+        id="text-field-controlled"
         disabled={this.props.isFormDisabled()}
         errorText={errorText}
         onBlur={this.handleBlur}
@@ -128,7 +132,6 @@ const FormsyText = createReactClass({
         onKeyDown={this.handleKeyDown}
         ref={this.setMuiComponentAndMaybeFocus}
         value={this.state.value}
-        {...rest}
       />
     )
   }
